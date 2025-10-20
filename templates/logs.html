@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-file-alt"></i> System Logs</h1>
+    <button class="btn btn-outline-primary" onclick="location.reload()">
+        <i class="fas fa-sync"></i> รีเฟรช
+    </button>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        {% if logs %}
+        <div class="table-responsive">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th width="150">เวลา</th>
+                        <th width="100">Job ID</th>
+                        <th width="80">Level</th>
+                        <th>ข้อความ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log.timestamp[:19] }}</td>
+                        <td>
+                            <a href="{{ url_for('job_detail', job_id=log.job_id) }}">{{ log.job_id }}</a>
+                        </td>
+                        <td>
+                            <span class="badge log-{{ log.level }}">{{ log.level }}</span>
+                        </td>
+                        <td>{{ log.message }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+            <h4>ยังไม่มี logs</h4>
+            <p class="text-muted">logs จะแสดงเมื่อมีการรัน jobs</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

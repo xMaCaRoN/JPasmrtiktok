@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3><i class="fas fa-info-circle"></i> {{ job.name }}</h3>
+                <span class="badge badge-lg status-{{ job.status }}">{{ job.status }}</span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>ข้อมูลพื้นฐาน</h5>
+                        <table class="table table-sm">
+                            <tr>
+                                <td><strong>ID:</strong></td>
+                                <td>{{ job.id }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>กำหนดเวลา:</strong></td>
+                                <td>{{ job.schedule_time }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>สร้างเมื่อ:</strong></td>
+                                <td>{{ job.created_at }}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>รันล่าสุด:</strong></td>
+                                <td>{{ job.last_run or 'ยังไม่เคยรัน' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>ผลลัพธ์</h5>
+                        <table class="table table-sm">
+                            {% if job.video_url %}
+                            <tr>
+                                <td><strong>วิดีโอ:</strong></td>
+                                <td><a href="{{ job.video_url }}" target="_blank">ดูวิดีโอ</a></td>
+                            </tr>
+                            {% endif %}
+                            {% if job.tiktok_url %}
+                            <tr>
+                                <td><strong>TikTok:</strong></td>
+                                <td><a href="{{ job.tiktok_url }}" target="_blank">ดู TikTok</a></td>
+                            </tr>
+                            {% endif %}
+                            {% if job.error_message %}
+                            <tr>
+                                <td><strong>ข้อผิดพลาด:</strong></td>
+                                <td class="text-danger">{{ job.error_message }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h5>Prompt</h5>
+                    <div class="alert alert-light">
+                        {{ job.prompt }}
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button class="btn btn-success" onclick="runJob('{{ job.id }}')">
+                        <i class="fas fa-play"></i> รันเลย
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteJob('{{ job.id }}')">
+                        <i class="fas fa-trash"></i> ลบ Job
+                    </button>
+                    <a href="{{ url_for('jobs_list') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> กลับ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-list"></i> Activity Logs</h5>
+            </div>
+            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                {% if logs %}
+                    {% for log in logs %}
+                    <div class="border-bottom pb-2 mb-2">
+                        <small class="text-muted">{{ log.timestamp[:19] }}</small>
+                        <div class="log-{{ log.level }}">
+                            <i class="fas fa-circle fa-xs"></i> {{ log.message }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">ยังไม่มี logs</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Real-time status update -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6><i class="fas fa-sync"></i> Real-time Status</h6>
+            </div>
+            <div class="card-body">
+                <div id="statusDisplay">
+                    สถานะ: <span class="badge status-{{ job.status }}">{{ job.status }}</span>
+                </div>
+                <button class="btn btn-sm btn-outline-primary mt-2" onclick="refreshStatus()">
+                    <i class="fas fa-refresh"></i> รีเฟรช
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function runJob(jobId) {
+    if (confirm('คุณต้องการรัน job นี้เลยหรือไม่?')) {
+        fetch(`/run_job/${jobId}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('เริ่มรัน job แล้ว');
+                    location.reload();
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.error);
+                }
+            });
+    }
+}
+
+function deleteJob(jobId) {
+    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบ job นี้?')) {
+        fetch(`/delete_job/${jobId}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/jobs';
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.error);
+                }
+            });
+    }
+}
+
+function refreshStatus() {
+    fetch(`/api/job_status/{{ job.id }}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('statusDisplay').innerHTML = 
+                `สถานะ: <span class="badge status-${data.status}">${data.status}</span>`;
+            
+            if (data.status !== '{{ job.status }}') {
+                location.reload(); // รีโหลดหน้าถ้าสถานะเปลี่ยน
+            }
+        });
+}
+
+// Auto refresh ทุก 5 วินาที
+setInterval(refreshStatus, 5000);
+</script>
+{% endblock %}

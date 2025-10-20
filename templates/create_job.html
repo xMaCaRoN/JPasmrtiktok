@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <!-- Mode Selection -->
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h2><i class="fas fa-plus"></i> สร้าง Auto-Job ใหม่</h2>
+                <p class="text-muted mb-4">เลือกโหมดการสร้างวิดีโอ ASMR</p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card border-primary h-100" id="autoCard">
+                            <div class="card-body text-center">
+                                <i class="fas fa-magic fa-3x text-primary mb-3"></i>
+                                <h4>🤖 Full Auto Mode</h4>
+                                <p class="text-muted">ระบบสุ่มทุกอย่างให้เอง<br>ไม่ต้องคิดเลย!</p>
+                                <ul class="list-unstyled text-start">
+                                    <li>✅ สุ่ม prompt ASMR ยอดนิยม</li>
+                                    <li>✅ สุ่ม Glass Fruit / Creative Materials</li>
+                                    <li>✅ สุ่ม caption และ hashtags</li>
+                                    <li>✅ อัปโหลด TikTok อัตโนมัติ</li>
+                                </ul>
+                                <button class="btn btn-primary" onclick="selectMode('auto')">
+                                    เลือก Auto Mode
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card border-secondary h-100" id="manualCard">
+                            <div class="card-body text-center">
+                                <i class="fas fa-edit fa-3x text-secondary mb-3"></i>
+                                <h4>✏️ Manual Mode</h4>
+                                <p class="text-muted">กำหนด prompt เอง<br>ควบคุมทุกรายละเอียด</p>
+                                <ul class="list-unstyled text-start">
+                                    <li>✏️ เขียน prompt เอง</li>
+                                    <li>⏰ ตั้งเวลารันเอง</li>
+                                    <li>🎯 ปรับแต่งรายละเอียด</li>
+                                    <li>🎨 สร้างคอนเทนต์เฉพาะ</li>
+                                </ul>
+                                <button class="btn btn-secondary" onclick="selectMode('manual')">
+                                    เลือก Manual Mode
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auto Mode Form -->
+        <div class="card" id="autoForm" style="display: none;">
+            <div class="card-header bg-primary text-white">
+                <h3><i class="fas fa-magic"></i> 🤖 Full Auto Mode</h3>
+            </div>
+            <div class="card-body">
+                <form id="autoJobForm">
+                    <div class="mb-3">
+                        <label class="form-label">ชื่อ Job</label>
+                        <input type="text" class="form-control" name="name" 
+                               placeholder="Auto ASMR Job" value="Auto ASMR Job">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">กำหนดเวลารัน</label>
+                        <select class="form-control" name="schedule_time" required>
+                            <option value="manual">รันด้วยตนเอง</option>
+                            <option value="hourly">ทุกชั่วโมง</option>
+                            <option value="daily">ทุกวัน (09:00)</option>
+                            <option value="weekly">ทุกสัปดาห์</option>
+                        </select>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle"></i> ระบบจะสุ่มให้อัตโนมัติ:</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <strong>🍓 Glass Fruits:</strong>
+                                <ul class="small mb-0">
+                                    <li>Glass Strawberry</li>
+                                    <li>Glass Mango</li>
+                                    <li>Glass Banana</li>
+                                    <li>Glass Watermelon</li>
+                                    <li>Glass Apple</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>✨ Creative Materials:</strong>
+                                <ul class="small mb-0">
+                                    <li>Solid Gold</li>
+                                    <li>Crystal Ice</li>
+                                    <li>Rainbow Soap</li>
+                                    <li>Kinetic Sand</li>
+                                    <li>Amber Honeycomb</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>🧈 Satisfying Textures:</strong>
+                                <ul class="small mb-0">
+                                    <li>Rainbow Butter</li>
+                                    <li>Jelly Cubes</li>
+                                    <li>Modeling Clay</li>
+                                    <li>Magnetic Putty</li>
+                                    <li>Foam Blocks</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-secondary" onclick="backToSelection()">กลับ</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-magic"></i> สร้าง Auto Job
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Manual Mode Form -->
+        <div class="card" id="manualForm" style="display: none;">
+            <div class="card-header bg-secondary text-white">
+                <h3><i class="fas fa-edit"></i> ✏️ Manual Mode</h3>
+            </div>
+            <div class="card-body">
+                <form id="manualJobForm">
+                    <div class="mb-3">
+                        <label class="form-label">ชื่อ Job</label>
+                        <input type="text" class="form-control" name="name" required 
+                               placeholder="เช่น Daily Fruit ASMR Video">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Prompt สำหรับสร้างวิดีโอ</label>
+                        <textarea class="form-control" name="prompt" rows="6" required 
+                                  placeholder="อธิบายวิดีโอ ASMR ที่ต้องการ..."></textarea>
+                        <div class="form-text">
+                            <strong>🔥 ตัวอย่าง Prompt ยอดนิยม:</strong><br>
+                            <button type="button" class="btn btn-outline-primary btn-sm mt-1" onclick="fillPrompt('glass_strawberry')">Glass Strawberry</button>
+                            <button type="button" class="btn btn-outline-info btn-sm mt-1" onclick="fillPrompt('gold_cutting')">Gold Cutting</button>
+                            <button type="button" class="btn btn-outline-success btn-sm mt-1" onclick="fillPrompt('rainbow_butter')">Rainbow Butter</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">กำหนดเวลารัน</label>
+                        <select class="form-control" name="schedule_time" required>
+                            <option value="">เลือกกำหนดเวลา</option>
+                            <option value="hourly">ทุกชั่วโมง</option>
+                            <option value="daily">ทุกวัน (09:00)</option>
+                            <option value="weekly">ทุกสัปดาห์</option>
+                            <option value="manual">รันด้วยตนเอง</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-secondary" onclick="backToSelection()">กลับ</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save"></i> สร้าง Manual Job
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ตัวอย่าง prompts
+const samplePrompts = {
+    glass_strawberry: "A hyper-realistic cinematic close-up of a whole, full-shaped glass strawberry with a soft red translucent hue. The glass fruit is perfectly centred on a wooden cutting board, glowing subtly under studio lighting. A human hand is clearly visible, holding a sharp stainless steel knife just above the fruit, ready to slice. In slow motion, the knife makes clean slices through the glass fruit, creating delicate glass-crack sounds. Transparent shards scatter lightly. ASMR slicing sounds only. Ultra-sharp macro lens, shallow depth of field.",
+    
+    gold_cutting: "A glowing chunk of solid gold being sliced with a heated knife. Each cut creates sharp, crisp snapping sounds like breaking delicate shells. Golden shards scatter as the surface cracks cleanly, blending satisfying crunch with molten smoothness. Warm studio lighting enhances the golden glow. Professional cinematography with macro lens.",
+    
+    rainbow_butter: "Ultra-satisfying scene of vibrant pastel rainbow butter being gently spread across warm crispy toast. The knife glides smoothly, creating perfect ridges and swirls. Soft spreading sounds and gentle sizzling from the warm bread. Close-up macro shot with natural lighting."
+};
+
+function selectMode(mode) {
+    // ซ่อน selection cards
+    document.getElementById('autoCard').parentElement.parentElement.style.display = 'none';
+    
+    if (mode === 'auto') {
+        document.getElementById('autoForm').style.display = 'block';
+        document.getElementById('manualForm').style.display = 'none';
+    } else {
+        document.getElementById('autoForm').style.display = 'none';
+        document.getElementById('manualForm').style.display = 'block';
+    }
+}
+
+function backToSelection() {
+    document.getElementById('autoCard').parentElement.parentElement.style.display = 'block';
+    document.getElementById('autoForm').style.display = 'none';
+    document.getElementById('manualForm').style.display = 'none';
+}
+
+function fillPrompt(type) {
+    const textarea = document.querySelector('#manualForm textarea[name="prompt"]');
+    textarea.value = samplePrompts[type];
+}
+
+// Auto Form Submit
+document.getElementById('autoJobForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    data.prompt = 'auto'; // กำหนดให้เป็น auto mode
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสร้าง Auto Job...';
+    
+    fetch('/create_job', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('🤖 สร้าง Auto Job สำเร็จ!\n\nระบบจะสุ่ม prompt และสร้างวิดีโอให้อัตโนมัติ');
+            window.location.href = '/jobs';
+        } else {
+            alert('เกิดข้อผิดพลาด: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('เกิดข้อผิดพลาด: ' + error.message);
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-magic"></i> สร้าง Auto Job';
+    });
+});
+
+// Manual Form Submit  
+document.getElementById('manualJobForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสร้าง Job...';
+    
+    fetch('/create_job', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ สร้าง Job สำเร็จ!');
+            window.location.href = '/jobs';
+        } else {
+            alert('เกิดข้อผิดพลาด: ' + data.error);
+        }
+    })
+    .catch(error => {
+        alert('เกิดข้อผิดพลาด: ' + error.message);
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> สร้าง Manual Job';
+    });
+});
+</script>
+{% endblock %}

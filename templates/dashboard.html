@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1><i class="fas fa-tachometer-alt"></i> แดชบอร์ด</h1>
+        
+        <!-- Daily Auto Schedule System -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-gradient-success text-white">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h4><i class="fas fa-calendar-alt"></i> 📅 ระบบอัปโหลดรายวัน</h4>
+                                <p class="mb-0">อัปโหลดวันละ 1 คลิป ในช่วงเวลาที่ engagement สูงสุด</p>
+                                <div id="scheduleStatus" class="mt-2">
+                                    <small><i class="fas fa-spinner fa-spin"></i> กำลังโหลดสถานะ...</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-light btn-lg me-2" onclick="enableDailyAuto()" id="enableBtn">
+                                    <i class="fas fa-play"></i> เปิดใช้งาน
+                                </button>
+                                <button class="btn btn-outline-light" onclick="disableDailyAuto()" id="disableBtn">
+                                    <i class="fas fa-pause"></i> ปิด
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Schedule Table -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-clock"></i> ตารางเวลาอัปโหลดประจำสัปดาห์</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th width="20%">วัน</th>
+                                        <th width="25%">ช่วงเวลา (เวลาไทย)</th>
+                                        <th width="20%">เวลาที่ตั้งไว้</th>
+                                        <th width="25%">เหตุผล</th>
+                                        <th width="10%">สถานะ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>🔵 วันจันทร์</strong></td>
+                                        <td><span class="badge bg-primary">19:00 – 20:00 น.</span></td>
+                                        <td><code>19:30</code></td>
+                                        <td><small>เริ่มต้นสัปดาห์ คนออนไลน์เยอะ</small></td>
+                                        <td><i class="fas fa-circle text-success" title="Active"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>🟠 วันอังคาร</strong></td>
+                                        <td><span class="badge bg-warning">16:00 – 17:00 น.</span></td>
+                                        <td><code>16:30</code></td>
+                                        <td><small>หลังเลิกงาน scroll TikTok</small></td>
+                                        <td><i class="fas fa-circle text-success" title="Active"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>🟢 วันพุธ</strong></td>
+                                        <td><span class="badge bg-success">17:00 – 18:00 น.</span></td>
+                                        <td><code>17:30</code></td>
+                                        <td><small>กลางสัปดาห์ engagement ดี</small></td>
+                                        <td><i class="fas fa-circle text-success" title="Active"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>🟡 วันพฤหัสบดี</strong></td>
+                                        <td><span class="badge bg-info">17:00 – 18:00 น.</span></td>
+                                        <td><code>17:30</code></td>
+                                        <td><small>เตรียมตัวสู่วันหยุด</small></td>
+                                        <td><i class="fas fa-circle text-success" title="Active"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>🔴 วันศุกร์</strong></td>
+                                        <td><span class="badge bg-danger">16:00 – 17:00 น.</span></td>
+                                        <td><code>16:30</code></td>
+                                        <td><small>TGIF! คนดูเยอะที่สุด</small></td>
+                                        <td><i class="fas fa-circle text-success" title="Active"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>🟣 วันเสาร์</strong></td>
+                                        <td><span class="badge bg-secondary">17:00 – 18:00 น.</span></td>
+                                        <td><code>17:30</code></td>
+                                        <td><small>วันหยุด คนอยู่บ้านพักผ่อน</small></td>
+                                        <td><i class="fas fa-circle text-success" title="Active"></i></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>🔶 วันอาทิตย์</strong></td>
+                                        <td><span class="badge bg-dark">20:00 – 21:00 น.</span></td>
+                                        <td><code>20:30</code></td>
+                                        <td><small>เตรียมตัวทำงานวันจันทร์</small></td>
+                                        <td><i class="fas fa-circle text-success" title="Active"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="alert alert-info mt-3">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>หมายเหตุ:</strong> เวลาทั้งหมดเป็นเวลาประเทศไทย (GMT+7) และได้มาจากการวิเคราะห์ engagement rate ของ TikTok ASMR content
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Auto Actions -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card bg-gradient-primary text-white">
+                    <div class="card-body">
+                        <h4><i class="fas fa-magic"></i> 🤖 Manual Auto Mode</h4>
+                        <p class="mb-3">สร้างวิดีโอ ASMR แบบอัตโนมัติทันที (นอกเหนือจากตารางรายวัน)</p>
+                        <div class="d-flex gap-2 flex-wrap">
+                            <button class="btn btn-light btn-lg" onclick="createAutoJob()">
+                                <i class="fas fa-play-circle"></i> สร้าง 1 วิดีโอ AUTO
+                            </button>
+                            <button class="btn btn-outline-light" onclick="createMassAutoJobs(3)">
+                                <i class="fas fa-rocket"></i> สร้าง 3 วิดีโอ
+                            </button>
+                            <button class="btn btn-outline-light" onclick="createMassAutoJobs(5)">
+                                <i class="fas fa-fire"></i> สร้าง 5 วิดีโอ
+                            </button>
+                        </div>
+                        <small class="mt-2 d-block opacity-75">
+                            🎯 ระบบจะสุ่ม: Glass Fruit Cutting, Creative Materials, Satisfying Textures
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- สถิติ -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5>ทั้งหมด</h5>
+                        <h2>{{ jobs|length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5>สำเร็จ</h5>
+                        <h2>{{ jobs|selectattr('status', 'equalto', 'completed')|list|length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5>กำลังรัน</h5>
+                        <h2>{{ jobs|selectattr('status', 'equalto', 'running')|list|length }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white">
+                    <div class="card-body">
+                        <h5>ล้มเหลว</h5>
+                        <h2>{{ jobs|selectattr('status', 'equalto', 'failed')|list|length }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Jobs ล่าสุด -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-clock"></i> Jobs ล่าสุด</h5>
+            </div>
+            <div class="card-body">
+                {% if jobs %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ชื่อ</th>
+                                <th>สถานะ</th>
+                                <th>รันล่าสุด</th>
+                                <th>การดำเนินการ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for job in jobs[:5] %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('job_detail', job_id=job.id) }}">{{ job.name }}</a>
+                                </td>
+                                <td>
+                                    <span class="badge status-{{ job.status }}">{{ job.status }}</span>
+                                </td>
+                                <td>{{ job.last_run or 'ยังไม่เคยรัน' }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="runJob('{{ job.id }}')">
+                                        <i class="fas fa-play"></i> รันเลย
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">ยังไม่มี jobs</p>
+                <a href="{{ url_for('create_job') }}" class="btn btn-primary">สร้าง Job แรก</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// โหลดสถานะ scheduler เมื่อเริ่มต้น
+document.addEventListener('DOMContentLoaded', function() {
+    loadScheduleStatus();
+    
+    // รีเฟรชทุก 30 วินาที
+    setInterval(loadScheduleStatus, 30000);
+    
+    // Auto refresh ถ้ามี jobs กำลังรัน
+    checkRunningJobs();
+});
+
+function checkRunningJobs() {
+    // นับ jobs ที่กำลังรัน
+    const runningJobsCount = {{ jobs|selectattr('status', 'equalto', 'running')|list|length|tojson }};
+    
+    if (runningJobsCount > 0) {
+        // รีเฟรชทุก 10 วินาที
+        setInterval(() => {
+            location.reload();
+        }, 10000);
+    }
+}
+
+function loadScheduleStatus() {
+    fetch('/schedule_status')
+        .then(response => response.json())
+        .then(data => {
+            const statusDiv = document.getElementById('scheduleStatus');
+            
+            if (data.scheduled_jobs_count > 0) {
+                statusDiv.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle text-success me-2"></i>
+                        <span><strong>เปิดใช้งานแล้ว</strong> - อัปโหลดถัดไป: <strong>${data.next_upload.weekday}</strong> 
+                        เวลา <strong>${data.next_upload.datetime.split(' ')[1].substring(0,5)}</strong> 
+                        (อีก ${data.next_upload.hours_until} ชั่วโมง)</span>
+                    </div>
+                `;
+                document.getElementById('enableBtn').innerHTML = '<i class="fas fa-sync"></i> รีเซ็ต';
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-pause-circle text-warning me-2"></i>
+                        <span><strong>ปิดใช้งาน</strong> - กดปุ่ม "เปิดใช้งาน" เพื่อเริ่มอัปโหลดอัตโนมัติ</span>
+                    </div>
+                `;
+                document.getElementById('enableBtn').innerHTML = '<i class="fas fa-play"></i> เปิดใช้งาน';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading schedule status:', error);
+            document.getElementById('scheduleStatus').innerHTML = 
+                '<i class="fas fa-exclamation-triangle text-danger"></i> ไม่สามารถโหลดสถานะได้';
+        });
+}
+
+function enableDailyAuto() {
+    const btn = document.getElementById('enableBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังตั้งค่า...';
+    
+    fetch('/enable_daily_auto', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`✅ ${data.message}\n\n📅 อัปโหลดถัดไป: ${data.next_upload.weekday}\n⏰ เวลา: ${data.next_upload.time}\n🕒 ช่วงเวลา: ${data.next_upload.range}`);
+                loadScheduleStatus();
+            } else {
+                alert('❌ เกิดข้อผิดพลาด: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('❌ เกิดข้อผิดพลาด: ' + error.message);
+        })
+        .finally(() => {
+            btn.disabled = false;
+        });
+}
+
+function disableDailyAuto() {
+    if (confirm('⚠️ ปิดระบบอัปโหลดรายวันหรือไม่?\n\nจะหยุดอัปโหลดอัตโนมัติทั้งหมด')) {
+        const btn = document.getElementById('disableBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังปิด...';
+        
+        fetch('/disable_daily_auto', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('⏹️ ' + data.message);
+                    loadScheduleStatus();
+                } else {
+                    alert('❌ เกิดข้อผิดพลาด: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('❌ เกิดข้อผิดพลาด: ' + error.message);
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-pause"></i> ปิด';
+            });
+    }
+}
+
+function createAutoJob() {
+    if (confirm('🤖 สร้างวิดีโอ ASMR แบบ AUTO หรือไม่?\n\n✨ ระบบจะสุ่ม prompt เอง\n🎬 สร้างวิดีโอด้วย AI\n📱 อัปโหลด TikTok อัตโนมัติ')) {
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> กำลังสร้าง...';
+        
+        fetch('/auto_create', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✅ ' + data.message);
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                alert('❌ เกิดข้อผิดพลาด: ' + data.error);
+            }
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-play-circle"></i> สร้าง 1 วิดีโอ AUTO';
+        });
+    }
+}
+
+function createMassAutoJobs(count) {
+    if (confirm(`🚀 สร้าง ${count} วิดีโอ ASMR พร้อมกันหรือไม่?\n\n⚡ จะใช้เวลาประมาณ ${count * 2} นาที\n🎯 แต่ละวิดีโอจะไม่ซ้ำกัน`)) {
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> กำลังสร้าง ${count} วิดีโอ...`;
+        
+        fetch('/mass_auto_create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ count: count })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`🎉 เริ่มสร้าง ${data.count} วิดีโอแล้ว!\n\nดูความคืบหน้าในหน้า Jobs`);
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                alert('❌ เกิดข้อผิดพลาด: ' + data.error);
+            }
+            btn.disabled = false;
+            btn.innerHTML = `<i class="fas fa-fire"></i> สร้าง ${count} วิดีโอ`;
+        });
+    }
+}
+
+function runJob(jobId) {
+    if (confirm('คุณต้องการรัน job นี้เลยหรือไม่?')) {
+        fetch(`/run_job/${jobId}`, { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('เริ่มรัน job แล้ว');
+                    location.reload();
+                } else {
+                    alert('เกิดข้อผิดพลาด: ' + data.error);
+                }
+            });
+    }
+}
+
+// Auto refresh ทุก 10 วินาที เมื่อมี jobs กำลังรัน
+const runningJobsCount = {{ jobs|selectattr('status', 'equalto', 'running')|list|length|tojson }};
+if (runningJobs > 0) {
+    setInterval(() => {
+        location.reload();
+    }, 10000);
+}
+</script>
+{% endblock %}
